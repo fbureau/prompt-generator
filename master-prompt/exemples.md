@@ -33,16 +33,18 @@ Mon idée : [IDÉE]
 ```
 Tu es avocat en droit des affaires français, spécialisé en droit des contrats commerciaux.
 
-Je suis dirigeant de PME et je dois signer le contrat ci-dessous sous 48 h. Analyse-le de mon point de vue (la partie [NOM/RÔLE]) pour que je sache quoi négocier avant signature.
-
-Rends ton analyse en trois parties : (1) les clauses qui me sont défavorables, classées par gravité, avec pour chacune le risque concret et la reformulation à proposer ; (2) les clauses absentes qu'un contrat de ce type devrait contenir ; (3) ton verdict en deux phrases : signer en l'état, négocier d'abord, ou refuser.
-
-Cite l'article ou la clause exacte à chaque fois. Si une clause est ambiguë au point que son interprétation dépend d'un contexte que tu n'as pas, signale-le au lieu de trancher. Ne gonfle pas la liste : trois risques réels valent mieux que dix risques théoriques. Rappelle en fin de réponse que cette analyse ne remplace pas la revue d'un avocat.
-
 <contrat>
 [TEXTE DU CONTRAT]
 </contrat>
+
+Je suis dirigeant de PME et je dois signer le contrat ci-dessus sous 48 h. Analyse-le de mon point de vue (la partie [NOM/RÔLE]) pour que je sache quoi négocier avant signature.
+
+Commence par extraire dans <citations> les clauses exactes sur lesquelles ton analyse s'appuie. Puis rends ton analyse en trois parties : (1) les clauses qui me sont défavorables, classées par gravité, avec pour chacune le risque concret et la reformulation à proposer ; (2) les clauses absentes qu'un contrat de ce type devrait contenir ; (3) ton verdict en deux phrases : signer en l'état, négocier d'abord, ou refuser.
+
+Si une clause est ambiguë au point que son interprétation dépend d'un contexte que tu n'as pas, signale-le au lieu de trancher. Ne gonfle pas la liste : trois risques réels valent mieux que dix risques théoriques. Rappelle en fin de réponse que cette analyse ne remplace pas la revue d'un avocat.
 ```
+
+**À noter :** le document est placé en haut et la demande à la fin (jusqu'à +30 % de qualité sur les entrées longues), et l'extraction de citations avant l'analyse ancre la réponse dans le texte réel du contrat.
 
 ## Exemple 3 — Prompt système réutilisable (extraction structurée)
 
@@ -62,4 +64,5 @@ Règles : si une information est absente du CV, mets null — ne déduis jamais 
 
 - Une variable `[ENTRE_CROCHETS]` par information que l'utilisateur changera à chaque usage ; tout le reste est figé dans le prompt.
 - Quand l'utilisateur destine le prompt à un agent ou à une tâche longue (Claude Code, Cowork), formule l'objectif et le critère de "terminé" plutôt que les étapes : "Le travail est fini quand les tests passent et que X" guide mieux qu'une liste de 12 étapes.
-- Quand la tâche traite des données fournies (document, tableau, code), place les instructions avant les données et encadre les données de balises XML nommées.
+- Quand la tâche traite des données volumineuses (document, tableau, code), place les DONNÉES EN HAUT dans des balises XML nommées, et les instructions + la question EN BAS. Pour plusieurs documents : `<documents>` contenant des `<document index="n">` avec `<source>` et `<document_content>`.
+- Pour montrer un raisonnement attendu dans un exemple, inclure le raisonnement dans des balises `<reflexion>` à l'intérieur de l'exemple : Claude généralise ce style.

@@ -21,9 +21,12 @@ Inclus uniquement les sections utiles au cas — un prompt court et dense bat un
 - **Rôle** : le persona le plus pertinent, avec le niveau d'expertise et le point de vue (ex. "expert-comptable spécialisé PME françaises", pas "assistant utile").
 - **Contexte et intention** : pourquoi la tâche existe, pour qui, ce que le résultat permettra de faire. Claude performe nettement mieux quand il comprend l'intention derrière la demande.
 - **Tâche** : formulée comme un objectif et des contraintes, pas comme une liste de micro-étapes. Les modèles récents suivent les instructions littéralement : trop de prescriptions dégrade le résultat.
-- **Format de sortie** : structure exacte, longueur cible, langue, ton. Spécifie ce qu'il faut faire plutôt que de longues listes d'interdits.
-- **Exemple** : si le format est difficile à décrire, un seul exemple court de sortie attendue vaut mieux qu'un paragraphe d'explication.
+- **Format de sortie** : structure exacte, longueur cible, langue, ton. Spécifie ce qu'il faut faire plutôt que de longues listes d'interdits ("réponds en prose fluide" marche mieux que "n'utilise pas de markdown").
+- **Exemples** : si le format ou le ton est difficile à décrire, montre-le. Un exemple court suffit pour un format simple ; pour une tâche répétitive où la régularité compte (classification, extraction, réécriture), mets-en 2 ou 3, variés et couvrant un cas limite, dans des balises `<exemple>`.
 - **Balises XML** (`<contexte>`, `<donnees>`, `<format>`) uniquement si le prompt mélange des instructions et des données fournies par l'utilisateur — inutiles pour un prompt simple.
+- **Documents longs** : place les documents EN HAUT du prompt et les instructions + la question À LA FIN (mesuré jusqu'à +30 % de qualité sur les entrées volumineuses). Pour l'analyse de longs documents, demande d'abord d'extraire les citations pertinentes dans des balises `<citations>` avant de répondre : ça ancre la réponse dans le texte et réduit les hallucinations.
+- **Raisonnement** : pour un problème complexe (analyse, calcul, décision), demande de raisonner avant de conclure ("Raisonne d'abord sur X dans `<reflexion>`, puis donne ta réponse dans `<reponse>`"). Préfère une consigne générale ("réfléchis en profondeur aux implications") à un plan d'étapes imposé : le raisonnement libre de Claude dépasse souvent le plan qu'un humain aurait prescrit.
+- **Auto-vérification** : quand l'erreur coûte cher (code, chiffres, droit), ajoute "Avant de terminer, vérifie ta réponse contre [critère concret]". Très efficace pour attraper les erreurs.
 
 ## Clauses de qualité à intégrer
 
@@ -48,6 +51,21 @@ Intègre ces garde-fous dans chaque prompt généré, reformulés et adaptés au
 - Pas de redondance : une instruction donnée une fois suffit. N'écris pas "IMPORTANT", "CRITIQUE" ou "tu DOIS absolument" — les modèles récents sur-réagissent à ce langage.
 - Préfère une instruction positive ("réponds en 3 paragraphes maximum") à son équivalent négatif ("ne fais pas de réponse trop longue").
 - Si l'objectif tient en une demande bien formulée de 3 lignes, livre 3 lignes. Un prompt gonflé coûte des tokens à chaque utilisation.
+
+## Prompts destinés à Claude Code ou à un agent
+
+Quand le prompt généré pilotera un agent (Claude Code, Cowork en mode tâche longue) :
+
+- Verbes d'action explicites : "modifie cette fonction" déclenche l'action, "peux-tu suggérer des changements" produit des suggestions. Choisis selon l'intention réelle de l'utilisateur.
+- Définis le critère de "terminé" plutôt que les étapes : "le travail est fini quand les tests passent et que X" guide mieux qu'une liste de 12 étapes.
+- Anti-sur-ingénierie : "ne fais que les changements demandés ou clairement nécessaires ; pas d'abstractions, de gestion d'erreur ou de flexibilité pour des besoins hypothétiques".
+- Ancrage dans le réel : "ne spécule jamais sur du code que tu n'as pas ouvert ; lis les fichiers concernés avant d'affirmer quoi que ce soit".
+- Pour le code testé : "implémente la logique générale qui résout le problème, pas une solution qui ne marche que pour les cas de test ; si un test te semble incorrect, dis-le au lieu de le contourner".
+- Actions risquées : "actions locales et réversibles sans demander ; demande confirmation avant toute action destructrice ou visible par d'autres (push --force, suppression, envoi de message)".
+
+## Le test du collègue
+
+Avant de livrer, applique la règle d'or d'Anthropic : montre mentalement le prompt à un collègue qui n'a aucun contexte sur la tâche. S'il serait confus ou devrait deviner quelque chose, Claude le sera aussi — précise ce point. Pour un pipeline en plusieurs étapes dont l'utilisateur doit inspecter les résultats intermédiaires (brouillon → critique → version finale), propose une chaîne de 2-3 prompts plutôt qu'un prompt monolithique.
 
 ## Méta-règles
 
