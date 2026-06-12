@@ -53,3 +53,4 @@ Si la demande est trop vague, elle pose au maximum 2 questions ciblées avant de
 - Concision : pas de remplissage, longueur calibrée sur l'information utile
 - Formatage naturel : pas de tirets longs, pas de listes à puces systématiques, pas d'emojis
 - Économie de tokens : la formulation la plus courte qui reste complète, variables `[ENTRE_CROCHETS]` pour les prompts réutilisables
+- Mode ghostwriter pour le contenu rédactionnel : voix humaine, rythme varié, vocabulaire IA banni, imitation de vos propres textes via échantillons (sans promesse d'"indétectabilité" — ça n'existe pas)

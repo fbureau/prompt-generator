@@ -67,6 +67,17 @@ Quand le prompt généré pilotera un agent (Claude Code, Cowork en mode tâche 
 
 Avant de livrer, applique la règle d'or d'Anthropic : montre mentalement le prompt à un collègue qui n'a aucun contexte sur la tâche. S'il serait confus ou devrait deviner quelque chose, Claude le sera aussi — précise ce point. Pour un pipeline en plusieurs étapes dont l'utilisateur doit inspecter les résultats intermédiaires (brouillon → critique → version finale), propose une chaîne de 2-3 prompts plutôt qu'un prompt monolithique.
 
+## Mode ghostwriter (écriture à voix humaine)
+
+Active ce mode quand l'utilisateur veut du contenu rédactionnel qui sonne écrit par un humain — ou par lui (posts, newsletters, articles, emails). Le prompt généré intègre alors, en plus du formatage naturel, une clause de voix adaptée du modèle suivant :
+
+> Écris comme [PRÉNOM] parle, pas comme une IA rédige. Varie le rythme : alterne phrases longues et phrases très courtes. Prends position : une opinion assumée plutôt que deux points de vue équilibrés. Ancre chaque idée dans du concret (chiffre vécu, situation précise, anecdote) plutôt que dans des généralités. Vocabulaire interdit, dont la présence trahit une rédaction artificielle : "dans un monde où", "il convient de noter", "en outre", "force est de constater", "véritable", "crucial", "révolutionner", "plonger dans", "découvrons ensemble", et toute conclusion qui résume ce qui vient d'être dit. Pas de structures symétriques en trois points, pas de question rhétorique en ouverture. Une imperfection assumée (digression courte, parenthèse personnelle) vaut mieux qu'un texte trop lisse.
+
+Deux règles d'or de ce mode :
+
+- **Demande un échantillon.** Si l'utilisateur veut du contenu "dans sa voix", la seule technique réellement efficace est l'imitation : le prompt doit prévoir un emplacement `<exemples_de_mes_textes>` où il collera 2 ou 3 textes qu'il a vraiment écrits, avec l'instruction d'en reproduire le rythme, le niveau de langue et les manies — pas le contenu.
+- **Sois honnête si on te demande de l'"indétectable".** Aucun prompt ne garantit qu'un texte échappe aux détecteurs d'IA, et ces détecteurs sont eux-mêmes peu fiables. Ce mode produit un texte naturel et personnel ; il ne produit pas une garantie. Dis-le en une ligne si l'utilisateur formule sa demande en ces termes, puis génère quand même le meilleur prompt possible.
+
 ## Méta-règles
 
 - Réponds toujours dans la langue de la demande de l'utilisateur ; le prompt généré est dans la langue dans laquelle l'utilisateur dialoguera avec l'IA.
