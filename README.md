@@ -1,56 +1,60 @@
 # prompt-generator
 
-Skill Claude **master-prompt** : transforme n'importe quel besoin en prompt expert, structuré et optimisé — réutilisable dans Claude Chat, Cowork et Claude Code.
+**master-prompt** — a Claude Skill that turns any need into an expert, structured, optimized prompt. Reusable across Claude Chat, Cowork and Claude Code.
 
-## Contenu
+## Contents
 
 ```
 master-prompt/
-├── SKILL.md      # la skill (instructions + bonnes pratiques)
-└── exemples.md   # exemples avant/après chargés à la demande
+├── SKILL.md      # the skill (instructions + best practices)
+└── exemples.md   # before/after examples loaded on demand
 ```
 
 ## Installation
 
-### Claude Chat (claude.ai) et Cowork
+### Claude Chat (claude.ai) and Cowork
 
-1. Zipper le dossier : `cd prompt-generator && zip -r master-prompt.zip master-prompt/`
-2. Sur claude.ai : **Paramètres → Capabilities (Fonctionnalités) → Skills → Upload skill**, puis sélectionner le zip.
-3. La skill se déclenche automatiquement dès que vous demandez de créer ou d'améliorer un prompt. Cowork utilise les mêmes skills que votre compte claude.ai.
+1. Zip the folder: `cd prompt-generator && zip -r master-prompt.zip master-prompt/`
+2. On claude.ai: **Settings → Capabilities → Skills → Upload skill**, then select the zip.
+3. The skill triggers automatically whenever you ask to create or improve a prompt. Cowork uses the same skills as your claude.ai account.
 
 ### Claude Code
 
-Copier le dossier dans vos skills personnelles (disponible dans tous vos projets) :
+Copy the folder into your personal skills (available in all your projects):
 
 ```sh
 mkdir -p ~/.claude/skills
 cp -r master-prompt ~/.claude/skills/
 ```
 
-Ou dans un projet précis (partagé via git avec l'équipe) :
+Or into a specific project (shared with your team via git):
 
 ```sh
 mkdir -p .claude/skills
 cp -r master-prompt .claude/skills/
 ```
 
-Puis invoquer avec `/master-prompt <votre besoin>` ou simplement demander "fais-moi un prompt pour…".
+Then invoke it with `/master-prompt <your need>` or simply ask "write me a prompt for…".
 
-## Utilisation
+## Usage
 
-Exprimez le besoin, la skill renvoie uniquement le prompt optimisé, prêt à copier :
+State your need; the skill returns only the optimized prompt, ready to copy:
 
-> fais-moi un prompt pour analyser des contrats fournisseurs
+> write me a prompt to review supplier contracts
 
-Si la demande est trop vague, elle pose au maximum 2 questions ciblées avant de générer.
+If the request is too vague, it asks at most 2 targeted questions before generating.
 
-## Ce que les prompts générés intègrent
+## What the generated prompts include
 
-- Rôle expert précis, contexte et intention (pas de persona creux)
-- Format de sortie exact, longueur cible, langue, ton
-- Garde-fous anti-hallucination : dire "je ne sais pas", demander une précision, distinguer faits et déductions
-- Honnêteté directe : pas de flatterie, contredire si la prémisse est fausse
-- Concision : pas de remplissage, longueur calibrée sur l'information utile
-- Formatage naturel : pas de tirets longs, pas de listes à puces systématiques, pas d'emojis
-- Économie de tokens : la formulation la plus courte qui reste complète, variables `[ENTRE_CROCHETS]` pour les prompts réutilisables
-- Mode ghostwriter pour le contenu rédactionnel : voix humaine, rythme varié, vocabulaire IA banni, imitation de vos propres textes via échantillons (sans promesse d'"indétectabilité" — ça n'existe pas)
+- A precise expert role, context and intent (no empty personas)
+- Exact output format, target length, language, tone
+- Anti-hallucination guardrails: say "I don't know", ask for clarification, separate facts from inferences
+- Blunt honesty: no flattery, push back when a premise is wrong
+- Conciseness: no filler, length calibrated to useful information
+- Natural formatting: no em dashes, no systematic bullet lists, no emojis
+- Token efficiency: the shortest wording that remains complete, `[BRACKETED]` variables for reusable prompts
+- Long-document handling: data at the top, question at the end, quote grounding before analysis
+- Agent-specific guidance (Claude Code / Cowork): explicit action verbs, "done" criteria, no over-engineering, confirmation before destructive actions
+- Ghostwriter mode for written content: human voice, varied rhythm, banned AI vocabulary, imitation of your own writing samples (no "undetectability" promise — that doesn't exist)
+
+> Note: the skill's instructions are written in French, but it always generates prompts in the language of your request.
