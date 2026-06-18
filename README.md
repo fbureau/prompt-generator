@@ -38,13 +38,21 @@ Then invoke it with `/master-prompt <your need>` or simply ask "write me a promp
 
 ## Usage
 
-State your need; the skill returns only the optimized prompt, ready to copy:
+The skill works in two modes and picks automatically:
 
-> write me a prompt to review supplier contracts
+- **Execution (default)** — for a concrete one-off need, it builds the expert prompt internally, runs it, and returns the result directly. No copy-paste, no intermediate step. The prompt engineering still happens; it's just invisible, and the guardrails apply to the answer itself.
 
-If the request is too vague, it asks at most 2 targeted questions before generating.
+  > write me a LinkedIn post about our new pricing → returns the finished post
 
-## What the generated prompts include
+- **Prompt only** — for a reusable/system prompt (to run later on many inputs, with `[BRACKETED]` variables), for loop mode, or when you explicitly ask ("just give me the prompt"), it returns the prompt itself in a code block.
+
+  > a reusable prompt to extract data from CVs → returns the prompt
+
+If the request is too vague, it asks at most 2 targeted questions first.
+
+## What the engineered prompts include
+
+(Applied to the answer in execution mode, or written into the prompt in prompt-only mode.)
 
 - A precise expert role, context and intent (no empty personas)
 - Exact output format, target length, language, tone
