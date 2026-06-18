@@ -55,6 +55,7 @@ If the request is too vague, it asks at most 2 targeted questions before generat
 - Token efficiency: the shortest wording that remains complete, `[BRACKETED]` variables for reusable prompts
 - Long-document handling: data at the top, question at the end, quote grounding before analysis
 - Agent-specific guidance (Claude Code / Cowork): explicit action verbs, "done" criteria, no over-engineering, confirmation before destructive actions
+- Loop mode for long, autonomous, or iterative tasks: generates loop scaffolding (orchestration + verifiable exit gate + self-verification + state files for cross-context-window resumption) instead of a single prompt
 - Ghostwriter mode for written content: human voice, varied rhythm, banned AI vocabulary, imitation of your own writing samples (no "undetectability" promise — that doesn't exist)
 
 > Note: the skill's instructions are written in French, but it always generates prompts in the language of your request.
