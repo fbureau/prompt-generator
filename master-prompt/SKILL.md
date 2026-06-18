@@ -67,6 +67,19 @@ Quand le prompt généré pilotera un agent (Claude Code, Cowork en mode tâche 
 
 Avant de livrer, applique la règle d'or d'Anthropic : montre mentalement le prompt à un collègue qui n'a aucun contexte sur la tâche. S'il serait confus ou devrait deviner quelque chose, Claude le sera aussi — précise ce point. Pour un pipeline en plusieurs étapes dont l'utilisateur doit inspecter les résultats intermédiaires (brouillon → critique → version finale), propose une chaîne de 2-3 prompts plutôt qu'un prompt monolithique.
 
+## Mode boucle (tâches itératives et agentiques)
+
+Certains besoins ne se résolvent pas en une réponse mais en une boucle : produire, vérifier, corriger, recommencer jusqu'à ce qu'un critère soit atteint (le "loop engineering" des posts viraux — derrière l'étiquette, c'est de la conception de boucle agentique). Active ce mode quand la tâche est longue, autonome, ou demande une qualité que l'utilisateur ne pourra pas vérifier à la main (gros refactor, recherche multi-sources, génération + test, rédaction longue à raffiner).
+
+Dans ce cas, ne livre pas un prompt unique mais l'ossature de la boucle, avec ces quatre pièces (omets celles qui ne s'appliquent pas) :
+
+- **Orchestration** : l'objectif global et le critère de "terminé" mesurable, pas la liste d'étapes. "La boucle s'arrête quand tous les tests de `tests.json` passent et que X" — la porte de sortie doit être vérifiable par le modèle lui-même.
+- **Vérification** : comment le modèle contrôle son propre travail à chaque tour, sans humain. Tests automatisés, relecture par critère explicite, ou sous-agent de critique en contexte neuf (plus fiable que l'auto-critique dans le même fil).
+- **État** : où persister l'avancement entre les tours et les fenêtres de contexte. Format structuré pour les données vérifiables (`tests.json` : id, nom, statut), texte libre pour les notes (`progress.txt` : fait, en cours, prochaine étape). Consigne explicite de ne jamais supprimer ou trafiquer les tests pour faire passer la boucle.
+- **Reprise** : si la tâche dépasse une fenêtre de contexte, l'instruction de démarrage pour le tour suivant ("lis `progress.txt`, `tests.json` et le git log ; rejoue un test d'intégration avant de continuer ; ne t'arrête jamais par peur de manquer de contexte").
+
+Pour un raffinage simple (un texte ou un livrable à améliorer, pas une tâche autonome), inutile de sortir l'artillerie : une chaîne de 2-3 prompts suffit (brouillon → critique contre critères → version finale), telle que décrite dans `## Le test du collègue`. La boucle complète est pour les tâches que le modèle mène seul sur la durée.
+
 ## Mode ghostwriter (écriture à voix humaine)
 
 Active ce mode quand l'utilisateur veut du contenu rédactionnel qui sonne écrit par un humain — ou par lui (posts, newsletters, articles, emails). Le prompt généré intègre alors, en plus du formatage naturel, une clause de voix adaptée du modèle suivant :
@@ -83,4 +96,4 @@ Deux règles d'or de ce mode :
 - Réponds toujours dans la langue de la demande de l'utilisateur ; le prompt généré est dans la langue dans laquelle l'utilisateur dialoguera avec l'IA.
 - Adapte le prompt à l'usage : un prompt système réutilisable (instructions générales + variables) n'a pas la même forme qu'un prompt ponctuel (contexte concret inclus).
 - Si l'utilisateur fournit un prompt existant à améliorer, conserve son intention et son vocabulaire métier ; corrige la structure, supprime le superflu, ajoute les garde-fous manquants. Signale en une ligne les changements majeurs.
-- Pour les formats avant/après et les cas complexes (multi-documents, agents, extraction structurée), consulte `exemples.md` dans ce dossier.
+- Pour les formats avant/après et les cas complexes (multi-documents, agents, mode boucle, extraction structurée), consulte `exemples.md` dans ce dossier.

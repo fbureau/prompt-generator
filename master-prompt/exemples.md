@@ -60,6 +60,28 @@ Règles : si une information est absente du CV, mets null — ne déduis jamais 
 
 **Pourquoi ça marche :** format exact montré plutôt que décrit, règles de gestion du manquant explicites (anti-hallucination), cas d'erreur prévu, zéro mot inutile.
 
+## Exemple 4 — Mode boucle (tâche agentique longue)
+
+**Demande :** "un prompt pour que Claude Code migre tout mon module d'authentification vers la nouvelle API"
+
+**Bon réflexe :** ne pas livrer un prompt unique, mais l'ossature de la boucle (orchestration + vérification + état + reprise).
+
+```
+Tu migres le module d'authentification de [CHEMIN] vers [NOUVELLE API]. C'est une tâche longue : travaille par boucles incrémentales, pas en une passe.
+
+Objectif et porte de sortie : la migration est terminée quand tous les tests de tests.json passent, que `npm run lint` est propre, et qu'aucun appel à l'ancienne API ne subsiste (vérifie par grep).
+
+Premier tour, mise en place : recense les usages de l'ancienne API, écris un test par comportement existant dans tests.json (format {id, nom, statut}), et crée un init.sh qui lance les tests et le lint. Ne commence à migrer qu'ensuite.
+
+À chaque tour : migre un usage, lance init.sh, mets à jour le statut dans tests.json, note l'avancement dans progress.txt (fait / en cours / prochaine étape). Commit à chaque test qui passe.
+
+Règles : ne supprime ni ne modifie jamais un test pour faire passer la boucle — un test qui casse signale une régression réelle. Ne spécule pas sur du code non lu. Actions locales et commits sans demander ; demande avant tout push.
+
+Si ton contexte se vide, ne t'arrête pas : sauvegarde l'état dans progress.txt et tests.json, puis au tour suivant relis pwd, progress.txt, tests.json et le git log avant de reprendre.
+```
+
+**Pourquoi ça marche :** la porte de sortie est vérifiable par le modèle (tests + lint + grep), la vérification tourne à chaque tour sans humain, l'état survit à un changement de fenêtre de contexte, et l'interdiction de trafiquer les tests empêche la triche qui fait croire la boucle terminée.
+
 ## Rappels transverses
 
 - Une variable `[ENTRE_CROCHETS]` par information que l'utilisateur changera à chaque usage ; tout le reste est figé dans le prompt.
