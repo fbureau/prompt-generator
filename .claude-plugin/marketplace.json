@@ -1,0 +1,18 @@
+{
+  "name": "text-to-cad",
+  "owner": {
+    "name": "François Bureau",
+    "email": "bureaufrancois@gmail.com"
+  },
+  "description": "Turn plain-language descriptions into parametric CAD models, ready to render to STL.",
+  "plugins": [
+    {
+      "name": "cad",
+      "source": "./plugins/cad",
+      "description": "Generate parametric OpenSCAD (or CadQuery) models from a plain-English description, ready to render to STL for 3D printing or CNC.",
+      "version": "0.1.0",
+      "category": "productivity",
+      "keywords": ["cad", "openscad", "cadquery", "3d-printing", "parametric", "stl"]
+    }
+  ]
+}
