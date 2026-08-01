@@ -32,8 +32,8 @@ Inclus uniquement les sections utiles au cas — un prompt court et dense bat un
 - **Exemples** : si le format ou le ton est difficile à décrire, montre-le. Un exemple court suffit pour un format simple ; pour une tâche répétitive où la régularité compte (classification, extraction, réécriture), mets-en 2 ou 3, variés et couvrant un cas limite, dans des balises `<exemple>`.
 - **Balises XML** (`<contexte>`, `<donnees>`, `<format>`) uniquement si le prompt mélange des instructions et des données fournies par l'utilisateur — inutiles pour un prompt simple.
 - **Documents longs** : place les documents EN HAUT du prompt et les instructions + la question À LA FIN (mesuré jusqu'à +30 % de qualité sur les entrées volumineuses). Pour l'analyse de longs documents, demande d'abord d'extraire les citations pertinentes dans des balises `<citations>` avant de répondre : ça ancre la réponse dans le texte et réduit les hallucinations.
-- **Raisonnement** : pour un problème complexe (analyse, calcul, décision), demande de raisonner avant de conclure ("Raisonne d'abord sur X dans `<reflexion>`, puis donne ta réponse dans `<reponse>`"). Préfère une consigne générale ("réfléchis en profondeur aux implications") à un plan d'étapes imposé : le raisonnement libre de Claude dépasse souvent le plan qu'un humain aurait prescrit.
-- **Auto-vérification** : quand l'erreur coûte cher (code, chiffres, droit), ajoute "Avant de terminer, vérifie ta réponse contre [critère concret]". Très efficace pour attraper les erreurs.
+- **Raisonnement** : les modèles récents raisonnent nativement avant de répondre — inutile de leur faire dérouler une réflexion visible pour un problème standard. Ne demande une réflexion apparente que si le raisonnement lui-même est le livrable (pédagogie, transparence d'une décision), formulée comme une explication produite pour le lecteur. N'instruis jamais le modèle de révéler, transcrire ou reproduire son raisonnement interne : sur les modèles récents ça peut déclencher un refus. Pour cadrer une analyse complexe, préfère une consigne générale ("pèse le pour et le contre avant de trancher") à un plan d'étapes imposé : le raisonnement libre de Claude dépasse souvent le plan qu'un humain aurait prescrit.
+- **Auto-vérification** : les modèles récents vérifient leur travail seuls. N'ajoute PAS de "vérifie ta réponse" pour une tâche ponctuelle — ça les pousse à sur-vérifier et gaspille des tokens sans gain. Réserve une vérification explicite aux tâches longues ou agentiques, portée par un contrôle concret (test, critère mesurable, sous-agent en contexte neuf) plutôt que par un vague "relis-toi".
 
 ## Clauses de qualité à intégrer
 
@@ -46,10 +46,13 @@ Intègre ces garde-fous dans chaque prompt généré, reformulés et adaptés au
 > Sois direct et honnête, quitte à contredire ou décevoir. Ne valide pas une idée faible par politesse. Si une prémisse de la demande est fausse, corrige-la d'abord. Pas de flatterie, pas de "Excellente question".
 
 **Concision**
-> Va droit au but. Aucune phrase de remplissage, aucun résumé de ce que tu viens de dire, aucune ouverture du type "Dans un monde où...". La longueur de la réponse doit correspondre à la densité d'information utile, pas à un effet de volume. Termine quand c'est dit.
+> Commence par le résultat : la première phrase répond à la demande, le détail vient après. Va droit au but. Aucune phrase de remplissage, aucun résumé de ce que tu viens de dire, aucune ouverture du type "Dans un monde où...". La longueur doit correspondre à la densité d'information utile, pas à un effet de volume — les modèles récents répondent long par défaut, contre-le activement. Termine quand c'est dit.
 
 **Formatage naturel**
 > Écris en prose naturelle. Pas de tirets longs (—), pas de listes à puces systématiques, pas de gras à chaque ligne, pas d'emojis sauf demande explicite. Structure avec des paragraphes ; n'utilise une liste que si l'information est réellement énumérative.
+
+**Fidélité au périmètre**
+> Livre ce qui est demandé, à la portée voulue, sans l'élargir, le rétrécir ni le transformer en silence. Fais les choix mineurs toi-même ; ne vérifie auprès de l'utilisateur que si deux lectures de la demande mèneraient à des travaux vraiment différents. Si une meilleure approche existe ou si la demande semble erronée, dis-le en une phrase et poursuis la tâche demandée.
 
 ## Règles d'efficacité (économie de tokens)
 
@@ -69,6 +72,7 @@ Quand le prompt généré pilotera un agent (Claude Code, Cowork en mode tâche 
 - Ancrage dans le réel : "ne spécule jamais sur du code que tu n'as pas ouvert ; lis les fichiers concernés avant d'affirmer quoi que ce soit".
 - Pour le code testé : "implémente la logique générale qui résout le problème, pas une solution qui ne marche que pour les cas de test ; si un test te semble incorrect, dis-le au lieu de le contourner".
 - Actions risquées : "actions locales et réversibles sans demander ; demande confirmation avant toute action destructrice ou visible par d'autres (push --force, suppression, envoi de message)".
+- Narration : les modèles récents annoncent volontiers ce qu'ils font et délèguent facilement à des sous-agents. Si tu veux limiter le bruit, précise la cadence ("une phrase avant le premier outil, une mise à jour seulement si tu trouves quelque chose ou changes de direction, le résultat en premier à la fin") ; pour les sous-agents, précise quand déléguer vaut le coup (travail volumineux et vraiment parallèle) plutôt que de laisser le modèle en lancer pour des broutilles.
 
 ## Le test du collègue
 
@@ -81,7 +85,7 @@ Certains besoins ne se résolvent pas en une réponse mais en une boucle : produ
 Dans ce cas, ne livre pas un prompt unique mais l'ossature de la boucle, avec ces quatre pièces (omets celles qui ne s'appliquent pas) :
 
 - **Orchestration** : l'objectif global et le critère de "terminé" mesurable, pas la liste d'étapes. "La boucle s'arrête quand tous les tests de `tests.json` passent et que X" — la porte de sortie doit être vérifiable par le modèle lui-même.
-- **Vérification** : comment le modèle contrôle son propre travail à chaque tour, sans humain. Tests automatisés, relecture par critère explicite, ou sous-agent de critique en contexte neuf (plus fiable que l'auto-critique dans le même fil).
+- **Vérification** : comment le modèle contrôle son propre travail à chaque tour, sans humain. Tests automatisés, relecture par critère explicite, ou sous-agent de critique en contexte neuf (plus fiable que l'auto-critique dans le même fil). Ajoute une consigne d'ancrage : "avant d'annoncer une étape comme finie, appuie-toi sur une sortie concrète ; si ce n'est pas vérifié, dis-le" — ça élimine les faux comptes rendus d'avancement sur les longues tâches.
 - **État** : où persister l'avancement entre les tours et les fenêtres de contexte. Format structuré pour les données vérifiables (`tests.json` : id, nom, statut), texte libre pour les notes (`progress.txt` : fait, en cours, prochaine étape). Consigne explicite de ne jamais supprimer ou trafiquer les tests pour faire passer la boucle.
 - **Reprise** : si la tâche dépasse une fenêtre de contexte, l'instruction de démarrage pour le tour suivant ("lis `progress.txt`, `tests.json` et le git log ; rejoue un test d'intégration avant de continuer ; ne t'arrête jamais par peur de manquer de contexte").
 
