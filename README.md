@@ -58,12 +58,15 @@ If the request is too vague, it asks at most 2 targeted questions first.
 - Exact output format, target length, language, tone
 - Anti-hallucination guardrails: say "I don't know", ask for clarification, separate facts from inferences
 - Blunt honesty: no flattery, push back when a premise is wrong
-- Conciseness: no filler, length calibrated to useful information
+- Conciseness: lead with the outcome, no filler, actively counter the models' default verbosity
 - Natural formatting: no em dashes, no systematic bullet lists, no emojis
+- Scope fidelity: deliver exactly what was asked, no silent widening or transforming
 - Token efficiency: the shortest wording that remains complete, `[BRACKETED]` variables for reusable prompts
 - Long-document handling: data at the top, question at the end, quote grounding before analysis
 - Agent-specific guidance (Claude Code / Cowork): explicit action verbs, "done" criteria, no over-engineering, confirmation before destructive actions
 - Loop mode for long, autonomous, or iterative tasks: generates loop scaffolding (orchestration + verifiable exit gate + self-verification + state files for cross-context-window resumption) instead of a single prompt
 - Ghostwriter mode for written content: human voice, varied rhythm, banned AI vocabulary, imitation of your own writing samples (no "undetectability" promise — that doesn't exist)
+
+Guidance is phrased in behavioral terms rather than hardcoded model names, and is audited against Anthropic's current prompting docs for the latest Claude models (Opus 5, Fable 5): native reasoning (no forced chain-of-thought that can trigger refusals), no over-verification, verbosity and scope control.
 
 > Note: the skill's instructions are written in French, but it always generates prompts in the language of your request.
